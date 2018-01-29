@@ -74,19 +74,13 @@ class Seeker(Base):
     G_MALE = 10
     G_FEMALE = 20
 
-    EDU_COLLEGE = 10
-    EDU_BACHELOR = 20
-    EDU_MASTER = 30
-    EDU_PHD = 40
-    EDU_OTHER = 50
-
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id', ondelete="CASCADE"))
     name = db.Column(db.String(128), unique=True, index=True, nullable=False)
     gender = db.Column(db.SmallInteger, default=G_MALE, nullable=False)
     age = db.Column(db.Integer, nullable=False)
     image_url = db.Column(db.String(256))  # 个人主页的图像
-    education = db.Column(db.SmallInteger, default=EDU_BACHELOR, nullable=False)
+    education = db.Column(db.String(8), nullable=False)
     college = db.Column(db.String(128), nullable=False) 
     major = db.Column(db.String(128), nullable=False)
     working_years = db.Column(db.Integer)
@@ -110,16 +104,18 @@ class Company(Base):
     stage = db.Column(db.String(16))
     city = db.Column(db.String(16))
     address = db.Column(db.String(128))
+    # 在招职位
     position_num = db.Column(db.Integer)
     company_TEL = db.Column(db.String(16))
     job_list = db.relationship('Job', uselist=False)
+
 
     def __repr__(self):
         return '<Company:{}>'.format(self.name)
 
     @property
     def url(self):
-        return url_for('company.detail', course_id=self.id)
+        return url_for('company.detail', id=self.id)
 
 class Job(Base):
     __tablename__ = 'job'
@@ -139,12 +135,14 @@ class Job(Base):
     edu_required = db.Column(db.SmallInteger, default=EDU_NOLIMIT)
     working_address = db.Column(db.String(16), nullable=False)
     company_info = db.relationship('Company')
-    release_date = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+    release_date = db.Column(db.String(32))
+
     job_description = db.Column(db.String(256))
 
     @property
     def url(self):
-        return url_for('job.detail', course_id=self.id)
+        return url_for('job.detail', id=self.id)
 
     def __repr__(self):
         return '<Job:{}>'.format(self.name)

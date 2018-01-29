@@ -1,15 +1,17 @@
 # 注册蓝图，将主页路由移入其中
 
 from flask_login import login_user, logout_user, login_required
-from flask import Blueprint, render_template, flash, redirect, url_for
+from flask import Blueprint, render_template, flash, redirect, url_for, request, current_app
 from jobplus.forms import LoginForm, Seeker_RegisterForm, Company_RegisterForm
-from jobplus.models import User
+from jobplus.models import User, Company, Job
 
 front = Blueprint('front', __name__)
 
 @front.route('/')
 def index():
-    return render_template('index.html')
+    companys = Company.query.filter().limit(9)
+    jobs = Job.query.filter().limit(9)
+    return render_template('index.html', companys=companys, jobs=jobs)
 
 @front.route('/login', methods=['GET', 'POST'])
 def login():
